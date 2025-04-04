@@ -4,7 +4,8 @@ import time
 letras_acertadas = {}
 archivo_txt = "panel_pistas.txt"
 jugadores = ['jugador1', 'jugador2', 'jugador3'] # creamos una lista con los jugadores
-
+fichero_frases = "panel_pistas.txt"
+paneles_jugados = []
 # Utilizamos un diccionario que guarde el dinero de cada jugador
 puntuaciones = {'jugador1': 0,
                 'jugador2': 0,
@@ -20,26 +21,22 @@ fichero_frases = "panel_pistas.txt"
 ## FUNCIONES DEL PANEL 
 
 # Funcion para seleccionar aleatoriamente la frase desde el archivo
-def seleccionar_frase(fichero):
+def seleccionar_frase(fichero, paneles_jugados):
     with open(fichero, 'r', encoding='utf-8') as fich:
-        # Se leen todas las lineas del archivo
         lineas = fich.readlines()
 
-    # Cogemos las líneas que tengan este simbolo: '|'
     lineas_validas = [l for l in lineas if '|' in l]
+    disponibles = [l for l in lineas_validas if l.strip().split('|')[0].upper() not in paneles_jugados]
 
-    # Se verifica si el simbolo indicado aparece en las lineas
-    if not lineas_validas:
-        raise ValueError("El archivo no contiene frases válidas con formato 'frase|pista'.")
+    if not disponibles:
+        print("¡Se han jugado todos los paneles! Fin del juego.")
+        exit()
 
-    # Elegimos aleatoriamente una linea que contenga ese simbolo
-    frase, pista = random.choice(lineas_validas).strip().split('|')
+    frase, pista = random.choice(disponibles).strip().split('|')
+    paneles_jugados.append(frase.upper())
     return frase.upper(), pista
 
-
-# Funcion para ir mostrando el panel donde aparecen las letras acertadas
 def mostrar_panel(frase, letras_acertadas, pista):
-    # Mostramos una letra si ha sido acertada o es un espacio; si no, mostramos "_"
     panel_mostrado = [letra if letra in letras_acertadas or letra == ' ' else '_' for letra in frase]
     print("\nPista:", pista)
     print("Panel:", " ".join(panel_mostrado))
@@ -186,7 +183,8 @@ def juego_ruleta():
     global turno_actual
     while True: #con esto se reiniciara el juego cada vez que un panel se resuelva
         # Seleccionamos la frase del panel y la pista desde el archivo
-        panel_original, pista = seleccionar_frase(fichero_frases)
+        
+        panel_original, pista = seleccionar_frase(fichero_frases, paneles_jugados)
         letras_acertadas.clear() #reiniciamos las letras acertadas cuando empezamos un nuevo panel
         # Elegimos aleatoriamente quién empieza
         turno_actual = elegir_jugador()
@@ -194,7 +192,7 @@ def juego_ruleta():
 
 <<<<<<< HEAD
     # Se elige aleatoriamente una frase del panel guardada en el archivo panel_pistas.txt
-    panel_original, pista = seleccionar_frase(fichero_frases)
+    panel_original, pista = seleccionar_frase(fichero_frases, paneles_jugados)
 
     # Llamamos a elegir_jugador para seleccionar un jugador aleatoriamente
     turno_actual = elegir_jugador()
