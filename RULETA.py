@@ -173,13 +173,8 @@ def comprobar_gajo(jugador, resultado, frase, pista):
 # --- FUNCIÓN PRINCIPAL ---
 def juego_ruleta():
     global turno_actual
-
-<<<<<<< HEAD
-
     # Seleccionamos la frase del panel y la pista desde el archivo
-=======
     # Se elige aleatoriamente una frase del panel guardada en el archivo panel_pistas.txt
->>>>>>> parent of 4423181 (Update RULETA.py)
     panel_original, pista = seleccionar_frase(fichero_frases)
 
     # Elegimos aleatoriamente quién empieza
@@ -203,8 +198,6 @@ def juego_ruleta():
         for j in puntuaciones:
             print(f"{j}: {puntuaciones[j]}")
         print("\n--- Siguiente turno ---")
-<<<<<<< HEAD
-
         print(f"\nTurno de {jugadores[turno_actual]}")
         mostrar_panel(panel_original, letras_acertadas, pista)
 
@@ -229,9 +222,6 @@ def juego_ruleta():
         if otra_partida != 'si':
             print("¡Gracias por jugar!")
             break  # Salir del bucle y terminar el juego
-=======
-
->>>>>>> parent of 4423181 (Update RULETA.py)
 
 # --- EJECUTAR JUEGO ---
 juego_ruleta()
