@@ -135,16 +135,19 @@ def comprobar_gajo(jugador, resultado, frase, pista):
         otrojugador = input('¿A qué jugador quieres darle tus puntos? ')
         sumar_puntos(jugador, resultado, otrojugador)
         turno_actual = (turno_actual + 1) % len(jugadores)
+        print(f"Ahora le toca a {jugadores[turno_actual]}")
         return True
 
     elif resultado == 'Pierde turno':
         print(f"{jugadores[turno_actual]} pierde su turno.")
         turno_actual = (turno_actual + 1) % len(jugadores)
+        print(f"Ahora le toca a {jugadores[turno_actual]}")
         return True
 
     elif resultado == 'Quiebra':
         sumar_puntos(jugador, resultado, '')
         turno_actual = (turno_actual + 1) % len(jugadores)
+        print(f"Ahora le toca a {jugadores[turno_actual]}")
         return True
 
     else:
@@ -173,32 +176,37 @@ def comprobar_gajo(jugador, resultado, frase, pista):
 # --- FUNCIÓN PRINCIPAL ---
 def juego_ruleta():
     global turno_actual
+    while True: #con esto se reiniciara el juego cada vez que un panel se resuelva
+        # Seleccionamos la frase del panel y la pista desde el archivo
+        panel_original, pista = seleccionar_frase(fichero_frases)
+        letras_acertadas.clear() #reiniciamos las letras acertadas cuando empezamos un nuevo panel
+        # Elegimos aleatoriamente quién empieza
+        turno_actual = elegir_jugador()
+        solucion = True
 
-    # Seleccionamos la frase del panel y la pista desde el archivo
-    panel_original, pista = seleccionar_frase(fichero_frases)
+        print(f"\nTurno de {jugadores[turno_actual]}")
+        mostrar_panel(panel_original, letras_acertadas, pista)
 
-    # Elegimos aleatoriamente quién empieza
-    turno_actual = elegir_jugador()
-    solucion = True
+        # Bucle principal del juego
+        while solucion:
+            input('\nPulsa ENTER para girar la ruleta...')
+            resultado = girar_ruleta()
+            print('Has caído en:', resultado)
+            
+            jugador = jugadores[turno_actual]
+            solucion = comprobar_gajo(jugador, resultado, panel_original, pista)
 
-    print(f"\nTurno de {jugadores[turno_actual]}")
-    mostrar_panel(panel_original, letras_acertadas, pista)
-
-    # Bucle principal del juego
-    while solucion:
-        input('\nPulsa ENTER para girar la ruleta...')
-        resultado = girar_ruleta()
-        print('Has caído en:', resultado)
-
-        jugador = jugadores[turno_actual]
-        solucion = comprobar_gajo(jugador, resultado, panel_original, pista)
-
-        # Mostramos las puntuaciones actualizadas
-        print("\nPuntuaciones:")
-        for j in puntuaciones:
-            print(f"{j}: {puntuaciones[j]}")
-        print("\n--- Siguiente turno ---")
-
+            # Mostramos las puntuaciones actualizadas
+            print("\nPuntuaciones:")
+            for j in puntuaciones:
+                print(f"{j}: {puntuaciones[j]}")
+            print(f"\nTurno de {jugadores[turno_actual]}")
+            print("\n--- Siguiente turno ---")
+            
+        otra_partida = input("¿Quieres jugar otra partida? (si/no): ").strip().lower()
+        if otra_partida != 'si':
+            print("¡Gracias por jugar!")
+            break  # Salir del bucle y terminar el juego
 
 # --- EJECUTAR JUEGO ---
 juego_ruleta()
