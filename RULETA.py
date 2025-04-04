@@ -1,6 +1,6 @@
 import random
 import time
-
+#DEFINICION DE VARIABLES
 # --- VARIABLES GLOBALES ---
 jugadores = ['jugador1', 'jugador2', 'jugador3']
 
