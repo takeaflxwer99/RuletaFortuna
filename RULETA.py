@@ -1,6 +1,6 @@
 import random
 import time
-#DEFINICION DE VARIABLES
+
 # --- VARIABLES GLOBALES ---
 jugadores = ['jugador1', 'jugador2', 'jugador3']
 
@@ -10,7 +10,6 @@ puntuaciones = {
     'jugador2': 0,
     'jugador3': 0
 }
-#hola aqui mi comentario molon
 
 # Diccionario para guardar letras acertadas por los jugadores
 letras_acertadas = {}
