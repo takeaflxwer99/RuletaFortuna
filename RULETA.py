@@ -1,43 +1,45 @@
 import random
 import time
-## DEFINICION DE VARIABLES
+#DEFINICION DE VARIABLES
+# --- VARIABLES GLOBALES ---
+jugadores = ['jugador1', 'jugador2', 'jugador3']
+
+# Creamos un diccionario para guardar la puntuación de cada jugador
+puntuaciones = {
+    'jugador1': 0,
+    'jugador2': 0,
+    'jugador3': 0
+}
+#hola aqui mi comentario molon
+
+# Diccionario para guardar letras acertadas por los jugadores
 letras_acertadas = {}
-archivo_txt = "panel_pistas.txt"
-jugadores = ['jugador1', 'jugador2', 'jugador3'] # creamos una lista con los jugadores
 
-# Utilizamos un diccionario que guarde el dinero de cada jugador
-puntuaciones = {'jugador1': 0,
-                'jugador2': 0,
-                'jugador3': 0}
-
-# Creamos otro diccionario para guardar las letras que acierten los jugadores
-letras_acertadas = {}
-
-# Archivo que contiene las frases y pistas
+# Ruta del fichero con frases y pistas
 fichero_frases = "panel_pistas.txt"
 
-#---------------------------------------------------------------------------------#
-## FUNCIONES DEL PANEL 
 
-# Funcion para seleccionar aleatoriamente la frase desde el archivo
+# --- FUNCIONES DEL PANEL ---
+
+# Seleccionamos aleatoriamente una frase y su pista desde el archivo
 def seleccionar_frase(fichero):
     with open(fichero, 'r', encoding='utf-8') as fich:
-        # Se leen todas las lineas del archivo
+        # Leemos todas las líneas del archivo
         lineas = fich.readlines()
 
-    # Cogemos las líneas que tengan este simbolo: '|'
+    # Filtramos las líneas que contienen el símbolo '|'
     lineas_validas = [l for l in lineas if '|' in l]
 
-    # Se verifica si el simbolo indicado aparece en las lineas
+    # Verificamos si hay líneas válidas
     if not lineas_validas:
         raise ValueError("El archivo no contiene frases válidas con formato 'frase|pista'.")
 
-    # Elegimos aleatoriamente una linea que contenga ese simbolo
+    # Elegimos aleatoriamente una línea válida
     frase, pista = random.choice(lineas_validas).strip().split('|')
     return frase.upper(), pista
 
 
-# Funcion para ir mostrando el panel donde aparecen las letras acertadas
+# Mostramos el panel con las letras acertadas hasta el momento
 def mostrar_panel(frase, letras_acertadas, pista):
     # Mostramos una letra si ha sido acertada o es un espacio; si no, mostramos "_"
     panel_mostrado = [letra if letra in letras_acertadas or letra == ' ' else '_' for letra in frase]
@@ -45,25 +47,25 @@ def mostrar_panel(frase, letras_acertadas, pista):
     print("Panel:", " ".join(panel_mostrado))
 
 
-## FUNCIONES DEL JUEGO Y LAS NORMAS
+# --- FUNCIONES DE JUEGO ---
 
-# Funcion que elige que jugador empieza el juego
+# Elegimos aleatoriamente al jugador que empieza
 def elegir_jugador():
     print('Eligiendo jugador...')
-    turno_actual = random.randint(0, len(jugadores) - 1) # eleccion aleatoria de un jugador de la lista
-    time.sleep(2) # usamos time.sleep para simular el giro con una pausa
+    turno_actual = random.randint(0, len(jugadores) - 1)
+    time.sleep(2)
     return turno_actual
 
 
-# Funcion que gira la ruleta en el turno inicial
+# Simulamos el giro de la ruleta y devolvemos el resultado
 def girar_ruleta():
-    opciones = ['0','25','50','75','100','150','Pierde turno','Quiebra', 'Me lo quedo', 'Se lo doy']
+    opciones = ['0', '25', '50', '75', '100', '150', 'Pierde turno', 'Quiebra', 'Me lo quedo', 'Se lo doy']
     resultado = random.choice(opciones)
     time.sleep(2)
     return resultado
 
 
-# Comprobamos si la letra está en la frase
+# Verificamos si la letra está en la frase
 def comprobar_letra(letra, frase, letras_acertadas):
     letra = letra.upper()
     if letra in frase:
@@ -102,12 +104,9 @@ def sumar_puntos(jugador, resultado, otrojugador):
         print(f"{jugador} ha dado sus puntos a {otrojugador}.")
 
 
-# Funcion que comprueba si el gajo es puntuacion (dinero) o casillas especiales
+# Comprobamos qué tipo de casilla ha salido y qué hacer
 def comprobar_gajo(jugador, resultado, frase, pista):
     global turno_actual
-    # ME LO QUEDO: a quien le toque robará dinero a otro jugador y dirá una letra
-    # si acierta la letra se queda con el dinero
-    # si falla la letra no se lo queda
     if resultado == 'Me lo quedo':
         letra = input('¿Qué letra quieres? ').upper()
         if comprobar_letra(letra, frase, letras_acertadas):
@@ -130,9 +129,7 @@ def comprobar_gajo(jugador, resultado, frase, pista):
             print('La letra no está en el panel.')
             turno_actual = (turno_actual + 1) % len(jugadores)
             return True
-        
-    # SE LO DOY: a quien le toque tiene que darle el dinero al jugador que elija
-    # además pierde el turno
+
     elif resultado == 'Se lo doy':
         print(f"{jugadores[turno_actual]} tiene que darle los puntos a otro jugador y pierde su turno.")
         otrojugador = input('¿A qué jugador quieres darle tus puntos? ')
@@ -140,24 +137,19 @@ def comprobar_gajo(jugador, resultado, frase, pista):
         turno_actual = (turno_actual + 1) % len(jugadores)
         print(f"Ahora le toca a {jugadores[turno_actual]}")
         return True
-    
-    # PIERDE TURNO: a quien le toque perderá su turno
-    # no pierde el dinero
+
     elif resultado == 'Pierde turno':
         print(f"{jugadores[turno_actual]} pierde su turno.")
         turno_actual = (turno_actual + 1) % len(jugadores)
         print(f"Ahora le toca a {jugadores[turno_actual]}")
         return True
-    
-    # QUIEBRA: a quien le toque perderá todo el dinero
-    # además también pierde el turno
+
     elif resultado == 'Quiebra':
         sumar_puntos(jugador, resultado, '')
         turno_actual = (turno_actual + 1) % len(jugadores)
         print(f"Ahora le toca a {jugadores[turno_actual]}")
         return True
-    
-    # DINERO: gajos que no son especiales, la puntuación
+
     else:
         letra = input('¿Qué letra quieres? ').upper()
         if comprobar_letra(letra, frase, letras_acertadas):
@@ -180,8 +172,8 @@ def comprobar_gajo(jugador, resultado, frase, pista):
             turno_actual = (turno_actual + 1) % len(jugadores)
             return True
 
-#---------------------------------------------------------------------------------#
-# FUNCIÓN PRINCIPAL
+
+# --- FUNCIÓN PRINCIPAL ---
 def juego_ruleta():
     global turno_actual
     while True: #con esto se reiniciara el juego cada vez que un panel se resuelva
@@ -193,10 +185,10 @@ def juego_ruleta():
         solucion = True
 
 
-    # Se elige aleatoriamente una frase del panel guardada en el archivo panel_pistas.txt
+    # Seleccionamos la frase del panel y la pista desde el archivo
     panel_original, pista = seleccionar_frase(fichero_frases)
 
-    # Llamamos a elegir_jugador para seleccionar un jugador aleatoriamente
+    # Elegimos aleatoriamente quién empieza
     turno_actual = elegir_jugador()
     solucion = True
 
@@ -206,12 +198,10 @@ def juego_ruleta():
     # Bucle principal del juego
     while solucion:
         input('\nPulsa ENTER para girar la ruleta...')
-        # Llamamos a girar_ruleta
         resultado = girar_ruleta()
         print('Has caído en:', resultado)
 
         jugador = jugadores[turno_actual]
-        # Llamamos a comprobar_gajo
         solucion = comprobar_gajo(jugador, resultado, panel_original, pista)
 
         # Mostramos las puntuaciones actualizadas
@@ -245,5 +235,5 @@ def juego_ruleta():
             print("¡Gracias por jugar!")
             break  # Salir del bucle y terminar el juego
 
-# Llamamos a juego_ruleta, la funcion principal para ejecutar todo el programa
+# --- EJECUTAR JUEGO ---
 juego_ruleta()
