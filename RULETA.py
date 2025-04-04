@@ -134,12 +134,14 @@ def comprobar_gajo(jugador, resultado, frase, pista):
                 else:
                     print('No era esa la respuesta... ¡pierdes el turno!')
                     turno_actual = (turno_actual + 1) % len(jugadores)
+                    print(f"Ahora le toca a {jugadores[turno_actual]}")
                     return True
             else:
                 return True
         else:
             print('La letra no está en el panel.')
             turno_actual = (turno_actual + 1) % len(jugadores)
+            print(f"Ahora le toca a {jugadores[turno_actual]}")
             return True
 
     elif resultado == 'Se lo doy':
@@ -147,6 +149,7 @@ def comprobar_gajo(jugador, resultado, frase, pista):
         otrojugador = input('¿A qué jugador quieres darle tus puntos? ')
         sumar_puntos(jugador, resultado, otrojugador)
         turno_actual = (turno_actual + 1) % len(jugadores)
+        print(f"Ahora le toca a {jugadores[turno_actual]}")
         return True
 
     elif resultado == 'Pierde turno':
