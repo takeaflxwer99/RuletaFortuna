@@ -190,7 +190,7 @@ def juego_ruleta():
         turno_actual = elegir_jugador()
         solucion = True
 
-<<<<<<< HEAD
+
     # Se elige aleatoriamente una frase del panel guardada en el archivo panel_pistas.txt
     panel_original, pista = seleccionar_frase(fichero_frases, paneles_jugados)
 
