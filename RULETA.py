@@ -219,7 +219,7 @@ def juego_ruleta():
         for j in puntuaciones:
             print(f"{j}: {puntuaciones[j]}")
         print("\n--- Siguiente turno ---")
-=======
+
         print(f"\nTurno de {jugadores[turno_actual]}")
         mostrar_panel(panel_original, letras_acertadas, pista)
 
@@ -231,7 +231,7 @@ def juego_ruleta():
             
             jugador = jugadores[turno_actual]
             solucion = comprobar_gajo(jugador, resultado, panel_original, pista)
->>>>>>> 94b7c34c26644ab3878f228b53f4c2f2ac530a93
+
 
             # Mostramos las puntuaciones actualizadas
             print("\nPuntuaciones:")
