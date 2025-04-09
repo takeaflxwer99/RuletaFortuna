@@ -224,4 +224,4 @@ def juego_ruleta():
 
 # --- EJECUTAR JUEGO ---
 if __name__ == "__main__":
-    RULETA()
+    juego_ruleta()
