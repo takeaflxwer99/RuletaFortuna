@@ -120,3 +120,5 @@ def test_comprobar_gajo_resolver_correcto(monkeypatch, capsys):
     assert sigue_jugando is False
     captured = capsys.readouterr()
     assert "¡Has resuelto el panel" in captured.out
+    
+# !py.test pytest_Ruleta.py
