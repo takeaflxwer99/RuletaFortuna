@@ -18,6 +18,7 @@ letras_acertadas = {}
 fichero_frases = "panel_pistas.txt"
 # Lista para almacenar las frases ya jugadas
 paneles_jugados = []  # Frases que ya han sido utilizadas
+turno_actual = 0
 
 
 # --- FUNCIONES DEL PANEL ---
@@ -222,4 +223,5 @@ def juego_ruleta():
 
 
 # --- EJECUTAR JUEGO ---
-juego_ruleta()
+if __name__ == "__main__":
+    RULETA()
