@@ -1,7 +1,4 @@
-# Teodora, aquí tienes tu código completo actualizado con:
-# - Modo de un solo jugador como opción al iniciar el juego.
-# - Configuración personalizable de la ruleta en dicho modo.
-# - Comentarios en tono de estudiante sin borrar los tuyos anteriores.
+# Ruleta de la Fortuna - 
 
 import random
 import time
