@@ -231,7 +231,13 @@ def juego_ruleta():
     global turno_actual, jugadores, puntuaciones, opciones_ruleta
 
     print("\n¡Bienvenido a la Ruleta de la Fortuna!")
-    modo = input("¿Quieres jugar en modo de 1 jugador o multijugador? (1/multi): ").strip().lower()
+    # Preguntamos hasta que se introduzca una opción válida: "1" o "multi"
+    while True:
+        modo = input("¿Quieres jugar en modo de 1 jugador o multijugador? (1/multi): ").strip().lower()
+        if modo in ["1", "multi","Multi","MULTI"]:
+            break
+        else:
+            print("Por favor, escribe solo '1' para un jugador o 'multi' para multijugador.")
     
     if modo == "1":
         nombre = input("Escribe tu nombre: ").strip().lower()
@@ -271,7 +277,7 @@ def juego_ruleta():
                 mostrar_panel(panel_original, letras_acertadas, pista)
 
         otra_partida = input("\n¿Quieres jugar otra partida? (sí/no): ").strip().lower()
-        if otra_partida not in ['si', 'sí']:
+        if otra_partida not in ['si', 'sí','SI','Sí']:
             print("\n¡Gracias por jugar!")
             ganador()
             break
