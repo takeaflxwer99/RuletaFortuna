@@ -41,7 +41,7 @@ def seleccionar_frase(fichero):
 
     # Si no hay frases disponibles, se han jugado todas y el juego termina
     if not disponibles:
-        print("¡Se han jugado todos los paneles! Fin del juego.")
+        print("\n¡Se han jugado todos los paneles! Fin del juego.")
         exit()
 
     # De las lineas validas, se elige aleatoriamente una frase y su pista correspondiente
@@ -61,8 +61,11 @@ def mostrar_panel(frase, letras_acertadas, pista):
     panel_mostrado = [letra if letra in letras_acertadas or letra == ' ' else '_' for letra in frase]
     
     # Mostramos la pista y el panel actual
-    print("\nPista:", pista)
-    print("Panel:", " ".join(panel_mostrado))
+    print("\n" + "="*40)
+    print(f"📌  PISTA: {pista}")
+    print("\n>   PANEL:")
+    print("\n   " + " ".join(panel_mostrado))
+    print("\n" + "="*40)
 
 #-----------------------------------------------------------------------------------------
 
@@ -70,7 +73,7 @@ def mostrar_panel(frase, letras_acertadas, pista):
 
 # Elegimos aleatoriamente al jugador que empieza
 def elegir_jugador():
-    print('Eligiendo jugador...')
+    print('\nEligiendo jugador...')
     turno = random.randint(0, len(jugadores) - 1)  # Se escoge un jugador aleatorio
     time.sleep(2) # Simula una pausa
     return turno
@@ -88,6 +91,9 @@ def girar_ruleta():
 # Verificamos si la letra esta en la frase
 def comprobar_letra(letra, frase, letras_acertadas):
     letra = letra.upper()  # Todas las letras se ponen en mayuscula
+    if letra in letras_acertadas:
+        print("Esa letra ya se ha dicho. Intenta con otra distinta.")
+        return False
     if letra in frase:
         # Añadimos las letras acertadas al diccionario que las guarda
         letras_acertadas[letra] = letras_acertadas.get(letra, 0) + 1
@@ -107,102 +113,114 @@ def sumar_puntos(jugador, resultado, otrojugador):
         puntos = int(resultado)
         # Sumamos los puntos al jugador actual
         puntuaciones[jugador] += puntos
-        print(f"{jugador} ha sumado {puntos} puntos.")
+        print(f"\n{jugador} ha sumado {puntos} puntos.")
         
     elif resultado == "Quiebra":
         # Si cae en Quiebra, el jugador pierde todos sus puntos
         puntuaciones[jugador] = 0 
-        print(f"{jugador} ha perdido todo su dinero.")
+        print(f"\n{jugador} ha perdido todo su dinero.")
         
     elif resultado == "Me lo quedo":
         # El jugador roba los puntos de otro jugador de su eleccion
         puntuaciones[jugador] += puntuaciones[otrojugador]
         puntuaciones[otrojugador] = 0
-        print(f"{jugador} ha robado los puntos de {otrojugador}.")
+        print(f"\n{jugador} ha robado los puntos de {otrojugador}.")
         
     elif resultado == "Se lo doy":
         # El jugador da sus puntos a otro jugador de su eleccion
         puntuaciones[otrojugador] += puntuaciones[jugador]
         puntuaciones[jugador] = 0
-        print(f"{jugador} ha dado sus puntos a {otrojugador}.")
-
+        print(f"\n{jugador} ha dado sus puntos a {otrojugador}.")
 
 # Comprobamos que tipo de casilla (dinero o especial) ha salido y que hacer
 def comprobar_gajo(jugador, resultado, frase, pista):
     global turno_actual
-    # ME LO QUEDO: el jugador roba los puntos de otro jugador que el elija
-    # primero dira una letra, si la acierta se queda con el dinero
-    # si la falla, no puede robar nada
+
     if resultado == 'Me lo quedo':
-        letra = input('¿Qué letra quieres? ').upper() # Ponemos la letra en mayusculas
+        letra = input('\n¿Qué letra quieres? ').upper()
         if comprobar_letra(letra, frase, letras_acertadas):
             mostrar_panel(frase, letras_acertadas, pista)
-            otrojugador = input('¿A qué jugador quieres robarle los puntos? ')
-            sumar_puntos(jugador, resultado, otrojugador)
-            resolver = input('¿Quieres resolver el panel? (si/no) ').lower() # Ponemos la palabra en minuscula
-            if resolver == 'si':
-                posible_solucion = input('Escribe aquí tu solución: ')
-                if comprobar_frase(frase, posible_solucion):
-                    print('¡Has resuelto el panel correctamente! Enhorabuena :)')
-                    return False
+            while True:
+                otrojugador_input = input('\n¿A qué jugador quieres robarle los puntos? ')
+                otrojugador = otrojugador_input.lower().replace(" ", "")
+                if otrojugador not in jugadores:
+                    print("Entrada no válida. Solo puedes elegir: jugador 1, jugador 2 o jugador 3.")
+                elif otrojugador == jugador:
+                    print("No puedes seleccionar tu propio nombre. Elige a otro jugador.")
                 else:
-                    print('No era esa la respuesta... ¡pierdes el turno!')
+                    break
+            sumar_puntos(jugador, resultado, otrojugador)
+            while True:
+                resolver = input('\n¿Quieres resolver el panel? (sí/no): ').strip().lower()
+                if resolver in ['si', 'sí', 'no']:
+                    break
+                else:
+                    print("Por favor, responde con 'sí' o 'no'.")
+            if resolver in ['si', 'sí']:
+                posible_solucion = input('\nEscribe aquí tu solución: ')
+                if comprobar_frase(frase, posible_solucion):
+                    print('\n¡Has resuelto el panel correctamente! Enhorabuena :)')
+                    return False, False
+                else:
+                    print('\nNo era esa la respuesta... ¡pierdes el turno!')
                     turno_actual = (turno_actual + 1) % len(jugadores)
-                    print(f"Ahora le toca a {jugadores[turno_actual]}")
-                    return True
+                    return True, True
             else:
-                return True
+                return True, False
         else:
-            print('La letra no está en el panel.')
             turno_actual = (turno_actual + 1) % len(jugadores)
-            print(f"Ahora le toca a {jugadores[turno_actual]}")
-            return True
-    
-    # SE LO DOY: el jugador escogera otro jugador para darle sus puntos
+            return True, True
+
     elif resultado == 'Se lo doy':
-        print(f"{jugador} tiene que darle los puntos a otro jugador y pierde su turno.")
-        otrojugador = input('¿A qué jugador quieres darle tus puntos? ')
+        print(f"\n{jugador} tiene que darle los puntos a otro jugador y pierde su turno.")
+        while True:
+            otrojugador_input = input('\n¿A qué jugador quieres darle tus puntos? ')
+            otrojugador = otrojugador_input.lower().replace(" ", "")
+            if otrojugador not in jugadores:
+                print("Entrada no válida. Solo puedes elegir: jugador 1, jugador 2 o jugador 3.")
+            elif otrojugador == jugador:
+                print("No puedes seleccionar tu propio nombre. Elige a otro jugador.")
+            else:
+                break
         sumar_puntos(jugador, resultado, otrojugador)
         turno_actual = (turno_actual + 1) % len(jugadores)
-        print(f"Ahora le toca a {jugadores[turno_actual]}")
-        return True
-    
-    # PIERDE TURNO: el jugador pierde su turno
-    # no pierde el dinero
+        return True, True
+
     elif resultado == 'Pierde turno':
-        print(f"{jugador} pierde su turno.")
+        print(f"\n{jugador} pierde su turno.")
         turno_actual = (turno_actual + 1) % len(jugadores)
-        return True
-    
-    # QUIEBRA: el jugador pierde todos sus puntos
-    # ademas tambien pierde el turno
+        return True, True
+
     elif resultado == 'Quiebra':
         sumar_puntos(jugador, resultado, '')
         turno_actual = (turno_actual + 1) % len(jugadores)
-        return True
-    
-    # PUNTUACION: el jugador gana dinero/puntos
+        return True, True
+
     else:
-        letra = input('¿Qué letra quieres? ').upper() # Ponemos la letra en mayusculas
+        letra = input('\n¿Qué letra quieres? ').upper()
         if comprobar_letra(letra, frase, letras_acertadas):
             mostrar_panel(frase, letras_acertadas, pista)
             sumar_puntos(jugador, resultado, '')
-            resolver = input('¿Quieres resolver el panel? (si/no) ').lower() # Ponemos la palabra en minuscula
-            if resolver == 'si':
-                posible_solucion = input('Escribe aquí tu solución: ')
-                if comprobar_frase(frase, posible_solucion):
-                    print('¡Has resuelto el panel correctamente! Enhorabuena :)')
-                    return False
+            while True:
+                resolver = input('\n¿Quieres resolver el panel? (sí/no): ').strip().lower()
+                if resolver in ['si', 'sí', 'no']:
+                    break
                 else:
-                    print('No era esa la respuesta... ¡pierdes el turno!')
+                    print("Por favor, responde con 'sí' o 'no'.")
+            if resolver in ['si', 'sí']:
+                posible_solucion = input('\nEscribe aquí tu solución: ')
+                if comprobar_frase(frase, posible_solucion):
+                    print('\n¡Has resuelto el panel correctamente! Enhorabuena :)')
+                    return False, False
+                else:
+                    print('\nNo era esa la respuesta... ¡pierdes el turno!')
                     turno_actual = (turno_actual + 1) % len(jugadores)
-                    return True
+                    return True, True
             else:
-                return True
+                return True, False
         else:
-            print('La letra no está en el panel.')
             turno_actual = (turno_actual + 1) % len(jugadores)
-            return True
+            return True, True
 
 #-----------------------------------------------------------------------------------------
 
@@ -210,20 +228,13 @@ def comprobar_gajo(jugador, resultado, frase, pista):
 
 # El jugador que más puntos tenga al final gana
 def ganador():
-    # Entre las puntuaciones de los 3 jugadores, busca la más alta
     puntos_max = max(puntuaciones.values())
-    
-    jugador_ganador = []  # lista que guarda al ganador
-    
+    jugador_ganador = []
     for jugador, puntos in puntuaciones.items():
-        # El jugador que tenga la puntuacion más alta se añade a la lista
         if puntos == puntos_max:
             jugador_ganador.append(jugador)
-            
-    # Si no hay empate
     if len(jugador_ganador) == 1:
         print(f"\n¡¡¡Ha ganado el {jugador_ganador[0]} con {puntos_max} puntos!!!")
-    # Si hay empate
     else:
         print(f"\nHay empate entre {', y '.join(jugador_ganador)} con {puntos_max} puntos cada uno")
 
@@ -236,40 +247,39 @@ def ganador():
 def juego_ruleta():
     global turno_actual
     while True:
-        letras_acertadas.clear()  # Limpiamos el diccionario de las letras acertadas al empezar cada partida
-        panel_original, pista = seleccionar_frase(fichero_frases)  # Seleccionamos aleatoriamente la frase y pista
-        turno_actual = elegir_jugador()  # Elegimos el primer jugador al azar
+        letras_acertadas.clear()
+        panel_original, pista = seleccionar_frase(fichero_frases)
+        turno_actual = elegir_jugador()
         solucion = True
 
-        print(f"\nTurno de {jugadores[turno_actual]}")
-        mostrar_panel(panel_original, letras_acertadas, pista)  # Mostramos el panel inicial
+        print(f"\n>>> Turno de {jugadores[turno_actual]} <<<")
+        mostrar_panel(panel_original, letras_acertadas, pista)
 
         while solucion:
             input('\nPulsa ENTER para girar la ruleta...')
-            resultado = girar_ruleta()  # Giramos la ruleta
-            print('Has caído en:', resultado)
+            resultado = girar_ruleta()
+            print(f"\nHas caído en: {resultado}")
 
             jugador = jugadores[turno_actual]
-            solucion = comprobar_gajo(jugador, resultado, panel_original, pista)  # Comprobamos el gajo resultante
+            solucion, cambio_turno = comprobar_gajo(jugador, resultado, panel_original, pista)
 
-            print("\nPuntuaciones:")
-            for j in puntuaciones:
-                print(f"{j}: {puntuaciones[j]}")
-            print("\n--- Siguiente turno ---")
-
-            if solucion:
-                print(f"\nTurno de {jugadores[turno_actual]}")
+            if cambio_turno:
+                print("\nPuntuaciones actuales:")
+                for j in puntuaciones:
+                    print(f"{j}: {puntuaciones[j]}")
+                print("\n--- Siguiente turno ---")
+                print(f"\n>>> Turno de {jugadores[turno_actual]} <<<")
                 mostrar_panel(panel_original, letras_acertadas, pista)
 
-        otra_partida = input("¿Quieres jugar otra partida? (si/no): ").strip().lower()
-        if otra_partida != 'si':
-            print("¡Gracias por jugar!")
-            ganador()  # Mostramos al jugador que ha ganado
-            break  # Si no queremos jugar otra partida, salimos del bucle
+        otra_partida = input("\n¿Quieres jugar otra partida? (sí/no): ").strip().lower()
+        if otra_partida not in ['si', 'sí']:
+            print("\n¡Gracias por jugar!")
+            ganador()
+            break
 
 #-----------------------------------------------------------------------------------------
 
 ### EJECUTAR JUEGO
-        
+
 if __name__ == "__main__":
     juego_ruleta()
