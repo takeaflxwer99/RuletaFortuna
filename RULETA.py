@@ -1,4 +1,4 @@
-# Ruleta de la Fortuna - 
+# Ruleta de la Fortuna - GTDM, Programación A1. 
 
 import random
 import time
