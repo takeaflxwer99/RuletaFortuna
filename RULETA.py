@@ -18,6 +18,9 @@ paneles_jugados = []
 # Variable que indica de quién es el turno actual
 turno_actual = 0
 
+# turno_actual guarda el índice del jugador activo en la lista `jugadores`.
+# Se actualiza con el operador módulo para ciclar entre turnos.
+
 #-----------------------------------------------------------------------------------------
 
 ### FUNCIONES RELACIONADAS CON EL PANEL
@@ -85,7 +88,7 @@ def actualizar_ranking(jugador):
         for nombre, puntos in ranking.items():
             f.write(f"{nombre}:{puntos}\n")
 
-# Función para mostrar el ranking acumulado
+# Función para mostrar el ranking acumulado------------------------------------------------------------
 def mostrar_ranking():
     print("\n🏆 RANKING ACUMULADO DE PANELISTAS 🏆")
     try:
@@ -106,16 +109,16 @@ def mostrar_ranking():
                             ranking_valido = True
                         except ValueError:
                             continue  # Si no se puede separar correctamente, saltamos la línea
-                    else:
-                        continue  # Si no hay ":", seguimos con la siguiente línea
                 if not ranking_valido:
                     print("No hay ranking válido registrado aún.")
-                return True
+                return ranking_valido  # Esta es la clave: retorna True solo si hubo algo válido
     except FileNotFoundError:
         print("No hay ranking registrado aún.")
         return False
-
-
+    
+# Esta función muestra el ranking si hay datos válidos en el archivo.
+# Devuelve True si encuentra al menos una línea con formato correcto.
+# Si el archivo no existe o no contiene datos válidos, devuelve False.
 
 #-----------------------------------------------------------------------------------------
 
@@ -132,6 +135,7 @@ def elegir_jugador():
 def girar_ruleta():
     # Se elige aleatoriamente una opción entre los posibles valores del gajo
     resultado = random.choice(opciones_ruleta)
+    # opciones_ruleta = lista de posibles resultados del giro de la ruleta. Contiene valores numéricos y casillas especiales.
     time.sleep(2)
     return resultado
 
@@ -178,6 +182,8 @@ def sumar_puntos(jugador, resultado, otrojugador):
 
 def comprobar_gajo(jugador, resultado, frase, pista):
     global turno_actual
+
+# Sub-función interna para asegurar que el usuario escriba solo una letra válida
 
     def pedir_letra_valida():
         while True:
@@ -393,6 +399,9 @@ def juego_ruleta():
         print("\n¡Gracias por jugar!")
         ganador()  # O lo que haga la función ganador()
         break  # Salimos del bucle y terminamos el juego
+
+# Lógica principal del loop de partidas. Reinicia el panel y controla el flujo del juego.
+
 
 #-----------------------------------------------------------------------------------------
 
