@@ -384,10 +384,15 @@ def juego_ruleta():
                 mostrar_panel(panel_original, letras_acertadas, pista)
 
         otra_partida = input("\n¿Quieres jugar otra partida? (sí/no): ").strip().lower()
-        if otra_partida not in ['si', 'sí','SI','Sí']:
-            print("\n¡Gracias por jugar!")
-            ganador()
-            break
+    
+        if otra_partida not in ['si', 'sí', 'si', 'sí']:  # Si el jugador no quiere seguir jugando
+            ver_ranking = input("¿Quieres ver el ranking actualizado? (sí/no): ").strip().lower()
+            if ver_ranking in ['sí', 'si', 's']:
+                # Llamamos a la función para mostrar el ranking
+                mostrar_ranking()
+        print("\n¡Gracias por jugar!")
+        ganador()  # O lo que haga la función ganador()
+        break  # Salimos del bucle y terminamos el juego
 
 #-----------------------------------------------------------------------------------------
 
