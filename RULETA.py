@@ -60,6 +60,35 @@ def mostrar_panel(frase, letras_acertadas, pista):
 
 #-----------------------------------------------------------------------------------------
 
+### FUNCIONES PARA GUARDAR RESULTADOS Y ACTUALIZAR RANKING
+
+# Guarda cada panel resuelto en un archivo para llevar un historial de partidas
+def guardar_panel_resuelto(jugador, frase):
+    with open("historial_partidas.txt", "a", encoding="utf-8") as f:
+        f.write(f"{jugador} resolvió el panel: '{frase}'\n")
+
+# Actualiza el ranking acumulado de paneles resueltos en un archivo
+def actualizar_ranking(jugador):
+    ranking = {}
+    # Intentamos leer el archivo de ranking existente
+    try:
+        with open("ranking_jugadores.txt", "r", encoding="utf-8") as f:
+            for linea in f:
+                nombre, puntuacion = linea.strip().split(":")
+                ranking[nombre] = int(puntuacion)
+    except FileNotFoundError:
+        pass  # Si no existe, se crea desde cero
+
+    # Sumamos 1 panel resuelto para el jugador
+    ranking[jugador] = ranking.get(jugador, 0) + 1
+
+    # Escribimos el ranking actualizado en el archivo
+    with open("ranking_jugadores.txt", "w", encoding="utf-8") as f:
+        for nombre, puntos in ranking.items():
+            f.write(f"{nombre}:{puntos}\n")
+            
+#-----------------------------------------------------------------------------------------
+
 ### FUNCIONES RELACIONADAS CON EL JUEGO
 
 # Elegimos aleatoriamente al jugador que empieza
@@ -145,6 +174,8 @@ def comprobar_gajo(jugador, resultado, frase, pista):
                 posible_solucion = input('\nEscribe aquí tu solución: ')
                 if comprobar_frase(frase, posible_solucion):
                     print('\n¡Has resuelto el panel correctamente! Enhorabuena :)')
+                    guardar_panel_resuelto(jugador, frase)
+                    actualizar_ranking(jugador)
                     return False, False
                 else:
                     print('\nNo era esa la respuesta... ¡pierdes el turno!')
@@ -196,6 +227,8 @@ def comprobar_gajo(jugador, resultado, frase, pista):
                 posible_solucion = input('\nEscribe aquí tu solución: ')
                 if comprobar_frase(frase, posible_solucion):
                     print('\n¡Has resuelto el panel correctamente! Enhorabuena :)')
+                    guardar_panel_resuelto(jugador, frase)
+                    actualizar_ranking(jugador)
                     return False, False
                 else:
                     print('\nNo era esa la respuesta... ¡pierdes el turno!')
@@ -280,6 +313,15 @@ def juego_ruleta():
         if otra_partida not in ['si', 'sí','SI','Sí']:
             print("\n¡Gracias por jugar!")
             ganador()
+            # MOSTRAR RANKING ACUMULADO
+            print("\n🏆 RANKING ACUMULADO DE PANELISTAS 🏆")
+            try:
+                with open("ranking_jugadores.txt", "r", encoding="utf-8") as f:
+                    for linea in f:
+                        nombre, puntos = linea.strip().split(":")
+                        print(f"{nombre}: {puntos} paneles resueltos")
+            except FileNotFoundError:
+                print("No hay ranking registrado aún.")
             break
 
 #-----------------------------------------------------------------------------------------
