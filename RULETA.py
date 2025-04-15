@@ -7,19 +7,14 @@ import time
 
 # Inicialmente vacía. Se rellena dependiendo del modo (1 jugador o multijugador)
 jugadores = []
-
 # Creamos un diccionario que guarde el dinero/puntuacion de cada jugador
 puntuaciones = {}
-
 # Creamos otro diccionario que guarde las letras acertadas
 letras_acertadas = {}
-
 # Escribimos aparte en un documento de tipo '.txt' las frases y pistas que hemos elegido
 fichero_frases = "panel_pistas.txt"
-
 # Cremos una lista que guarde los paneles que ya han salido para no repetirlos
 paneles_jugados = []
-
 # Variable que indica de quién es el turno actual
 turno_actual = 0
 
@@ -90,6 +85,38 @@ def actualizar_ranking(jugador):
         for nombre, puntos in ranking.items():
             f.write(f"{nombre}:{puntos}\n")
 
+# Función para mostrar el ranking acumulado
+def mostrar_ranking():
+    print("\n🏆 RANKING ACUMULADO DE PANELISTAS 🏆")
+    try:
+        with open("ranking_jugadores.txt", "r", encoding="utf-8") as f:
+            contenido = f.readlines()
+            if not contenido:
+                print("No hay ranking registrado aún.")
+                return False
+            else:
+                # Variable para comprobar si hay líneas con el formato correcto
+                ranking_valido = False
+                for linea in contenido:
+                    # Verificamos que la línea no esté vacía y tenga el formato correcto
+                    if ":" in linea:
+                        try:
+                            nombre, puntos = linea.strip().split(":")
+                            print(f"{nombre}: {puntos} paneles resueltos")
+                            ranking_valido = True
+                        except ValueError:
+                            continue  # Si no se puede separar correctamente, saltamos la línea
+                    else:
+                        continue  # Si no hay ":", seguimos con la siguiente línea
+                if not ranking_valido:
+                    print("No hay ranking válido registrado aún.")
+                return True
+    except FileNotFoundError:
+        print("No hay ranking registrado aún.")
+        return False
+
+
+
 #-----------------------------------------------------------------------------------------
 
 ### FUNCIONES RELACIONADAS CON EL JUEGO
@@ -146,8 +173,7 @@ def sumar_puntos(jugador, resultado, otrojugador):
         puntuaciones[otrojugador] += puntuaciones[jugador]
         puntuaciones[jugador] = 0
         print(f"\n{jugador} ha dado sus puntos a {otrojugador}.")
-
-#-----------------------------------------------------------------------------------------
+        
 # Comprobamos qué tipo de casilla (dinero o especial) ha salido y qué hacer según el caso
 
 def comprobar_gajo(jugador, resultado, frase, pista):
@@ -272,6 +298,7 @@ def ganador():
     else:
         print(f"\nHay empate entre {', y '.join(jugador_ganador)} con {puntos_max} puntos cada uno")
 
+
 #-----------------------------------------------------------------------------------------
 
 ### FUNCIÓN PRINCIPAL
@@ -280,6 +307,37 @@ def juego_ruleta():
     global turno_actual, jugadores, puntuaciones, opciones_ruleta
 
     print("\n¡Bienvenido a la Ruleta de la Fortuna!")
+
+    while True:
+        print("\n¿Qué quieres hacer?")
+        print("1. Ver ranking")
+        print("2. Jugar (1 jugador o multijugador)")
+        print("3. Salir")
+        eleccion = input("Elige una opción (1/2/3): ").strip()
+
+        if eleccion == "1":
+            hay_datos = mostrar_ranking()
+            if not hay_datos:
+                continue
+            while True:
+                siguiente = input("\n¿Quieres jugar o salir? (jugar/salir): ").strip().lower()
+                if siguiente in ['jugar']:
+                    break
+                elif siguiente in ['salir']:
+                    print("\n¡Hasta la próxima!")
+                    return
+                else:
+                    print("Opción no válida. Escribe 'jugar' o 'salir'.")
+            # Si elige jugar, rompemos este bucle y seguimos con el juego
+            break
+        elif eleccion == "2":
+            break
+        elif eleccion == "3":
+            print("\n¡Hasta la próxima!")
+            return
+        else:
+            print("Opción no válida. Por favor, elige 1, 2 o 3.")
+
     # Preguntamos hasta que se introduzca una opción válida: "1" o "multi"
     while True:
         modo = input("¿Quieres jugar en modo de 1 jugador o multijugador? (1/multi): ").strip().lower()
@@ -329,15 +387,6 @@ def juego_ruleta():
         if otra_partida not in ['si', 'sí','SI','Sí']:
             print("\n¡Gracias por jugar!")
             ganador()
-            # MOSTRAR RANKING ACUMULADO
-            print("\n🏆 RANKING ACUMULADO DE PANELISTAS 🏆")
-            try:
-                with open("ranking_jugadores.txt", "r", encoding="utf-8") as f:
-                    for linea in f:
-                        nombre, puntos = linea.strip().split(":")
-                        print(f"{nombre}: {puntos} paneles resueltos")
-            except FileNotFoundError:
-                print("No hay ranking registrado aún.")
             break
 
 #-----------------------------------------------------------------------------------------
