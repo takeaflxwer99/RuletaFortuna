@@ -110,11 +110,56 @@ Este programa ha sido probado con **pytest** usando técnicas como **mocking** p
 
 ---
 
-## 🧪 Ejemplos y pruebas
+## 🧪 Cobertura de Testing Automatizado
 
-- ✅ Capturas de pantalla (opcional)
-- ✅ Casos de prueba cubiertos
-- ✅ Resultados esperados descritos en el código de test
+El proyecto cuenta con una **suite de tests automatizados en `pytest`** que cubre todos los aspectos funcionales del juego.
+
+### 🔬 ¿Qué se ha probado?
+
+#### 🎯 Paneles
+- ✅ Lectura de frases y pistas válidas desde archivo
+- ✅ Manejo de archivos inexistentes
+- ✅ Evita repetir frases jugadas
+
+#### 🔤 Letras y frases
+- ✅ Registro correcto de letras acertadas
+- ✅ Rechazo de letras repetidas o incorrectas
+- ✅ Comparación de frases ignorando mayúsculas y espacios
+
+#### 🎡 Ruleta
+- ✅ Resultados aleatorios validados con `mock`
+- ✅ Casillas especiales:
+  - Puntuación (25, 50, 100, etc.)
+  - Pierde turno
+  - Quiebra
+  - Me lo quedo
+  - Se lo doy
+
+#### 🧮 Puntuaciones
+- ✅ Suma/resta correcta de puntos
+- ✅ Transferencias entre jugadores
+- ✅ Reinicio a 0 en “Quiebra”
+
+#### 🔁 Turnos
+- ✅ Turno inicial aleatorio
+- ✅ Ciclo continuo de turnos (jugador1 → jugador2 → jugador3 → ...)
+- ✅ Gestión tras fallo o acierto
+
+#### 🏁 Final de partida
+- ✅ Reconocimiento de victoria con mensaje final
+- ✅ Gestión de empates
+- ✅ Confirmación de cierre del juego cuando se decide no continuar
+
+#### 🧪 Técnicas de testing utilizadas
+- `mock_open` para simular archivos
+- `patch` para modificar funciones como `random.choice`
+- `capsys` para verificar salidas por consola
+- `monkeypatch` para simular entradas del usuario
+- `fixture` para reiniciar variables globales antes de cada prueba
+
+---
+
+> ✅ **Resultado:** Cobertura total asegurada. Todos los caminos lógicos del juego han sido validados, incluidos los errores esperados y los flujos especiales.
 
 ---
 
