@@ -33,7 +33,7 @@ def reset_globales():
     jugadores.extend(['jugador1', 'jugador2', 'jugador3'])
 
 # ---------------------------
-# NUEVO TEST: Solo un jugador
+# solo un jugador
 # ---------------------------
 def test_juego_un_jugador(monkeypatch):
     # Simula un solo jugador
