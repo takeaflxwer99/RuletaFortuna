@@ -74,8 +74,11 @@ def actualizar_ranking(jugador):
     try:
         with open("ranking_jugadores.txt", "r", encoding="utf-8") as f:
             for linea in f:
-                nombre, puntuacion = linea.strip().split(":")
-                ranking[nombre] = int(puntuacion)
+                if ":" in linea:
+                    partes = linea.strip().split(":")
+                    if len(partes) == 2:
+                        nombre, puntuacion = partes
+                        ranking[nombre] = int(puntuacion)
     except FileNotFoundError:
         pass  # Si no existe, se crea desde cero
 
@@ -86,7 +89,7 @@ def actualizar_ranking(jugador):
     with open("ranking_jugadores.txt", "w", encoding="utf-8") as f:
         for nombre, puntos in ranking.items():
             f.write(f"{nombre}:{puntos}\n")
-            
+
 #-----------------------------------------------------------------------------------------
 
 ### FUNCIONES RELACIONADAS CON EL JUEGO
@@ -150,8 +153,18 @@ def sumar_puntos(jugador, resultado, otrojugador):
 def comprobar_gajo(jugador, resultado, frase, pista):
     global turno_actual
 
+    def pedir_letra_valida():
+        while True:
+            letra = input('\n¿Qué letra quieres? ').strip().upper()
+            if len(letra) != 1 or not letra.isalpha():
+                print("Por favor, escribe solo una letra.")
+            elif letra in letras_acertadas:
+                print("Esa letra ya se ha dicho. Intenta con otra distinta.")
+            else:
+                return letra
+
     if resultado == 'Me lo quedo':
-        letra = input('\n¿Qué letra quieres? ').upper()
+        letra = pedir_letra_valida()
         if comprobar_letra(letra, frase, letras_acertadas):
             mostrar_panel(frase, letras_acertadas, pista)
             while True:
@@ -184,6 +197,7 @@ def comprobar_gajo(jugador, resultado, frase, pista):
             else:
                 return True, False
         else:
+            print("\nEsa letra no está en el panel.")
             turno_actual = (turno_actual + 1) % len(jugadores)
             return True, True
 
@@ -212,8 +226,8 @@ def comprobar_gajo(jugador, resultado, frase, pista):
         turno_actual = (turno_actual + 1) % len(jugadores)
         return True, True
 
-    else:
-        letra = input('\n¿Qué letra quieres? ').upper()
+    else:  # Caso normal de dinero
+        letra = pedir_letra_valida()
         if comprobar_letra(letra, frase, letras_acertadas):
             mostrar_panel(frase, letras_acertadas, pista)
             sumar_puntos(jugador, resultado, '')
@@ -237,8 +251,10 @@ def comprobar_gajo(jugador, resultado, frase, pista):
             else:
                 return True, False
         else:
+            print("\nEsa letra no está en el panel.")
             turno_actual = (turno_actual + 1) % len(jugadores)
             return True, True
+
 
 #-----------------------------------------------------------------------------------------
 
