@@ -1,0 +1,1 @@
+jugador1 resolvió el panel: 'A B C'

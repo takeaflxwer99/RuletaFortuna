@@ -33,6 +33,26 @@ def reset_globales():
     jugadores.extend(['jugador1', 'jugador2', 'jugador3'])
 
 # ---------------------------
+# NUEVO TEST: Solo un jugador
+# ---------------------------
+def test_juego_un_jugador(monkeypatch):
+    # Simula un solo jugador
+    jugadores.clear()
+    jugadores.append('jugador_unico')
+    puntuaciones.clear()
+    puntuaciones['jugador_unico'] = 0
+
+    # Simulamos una ronda con entrada "A", no resolver
+    inputs = iter(["A", "no"])
+    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+
+    resultado = "50"
+    sigue_jugando, cambio = comprobar_gajo('jugador_unico', resultado, "A B C", "Pista")
+
+    assert sigue_jugando is True
+    assert puntuaciones['jugador_unico'] == 50
+
+# ---------------------------
 # seleccionar_frase
 # ---------------------------
 def test_seleccionar_frase_sin_archivo():
@@ -134,7 +154,6 @@ def test_comprobar_gajo_me_lo_quedo(monkeypatch):
     assert puntuaciones['jugador2'] == 0
     assert sigue_jugando is True
 
-
 def test_comprobar_gajo_se_lo_doy(monkeypatch):
     inputs = iter(["jugador2"])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
@@ -152,7 +171,6 @@ def test_comprobar_gajo_letra_acertada(monkeypatch):
     sigue_jugando, cambio = comprobar_gajo('jugador1', resultado, "A B C", "Pista")
     assert puntuaciones['jugador1'] == 50
     assert sigue_jugando is True
-
 
 def test_comprobar_gajo_resolver_correcto(monkeypatch, capsys):
     inputs = iter(["A", "si", "A B C"])
@@ -177,5 +195,3 @@ def test_ganador_empate(capsys):
     ganador()
     captured = capsys.readouterr()
     assert "hay empate entre" in captured.out.lower()
-
-# !py.test pytest_Ruleta.py
